@@ -1,1 +1,1 @@
-# Covid19-CTScan-Classification-
+# Covid19-CTScan-Classification
