@@ -19,13 +19,13 @@ def actualmed_processing(actualmed_csvpath, actualmed_imgpath):
     mapping['No finding'] = 'normal'
     # train/test split
     split = 0.1
-    
+    #reading the csv
     actualmed_covid = pd.read_csv(actualmed_csvpath)
-
+ 
     filename_label_new = {'normal': [], 'pneumonia': [], 'COVID-19': []}
     count_new = {'normal': 0, 'pneumonia': 0, 'COVID-19': 0}
     
-    # mapping 
+    # example = {"normal" : ["Patient ID", "imagename", "COVID", "view"]}
     for index, row in actualmed_covid.iterrows():
         f = str(row['finding']).split(',')[0] 
         if f in mapping:
@@ -33,7 +33,7 @@ def actualmed_processing(actualmed_csvpath, actualmed_imgpath):
             entry = [str(row['patientid']), row['imagename'], mapping[f], row['view']]
             filename_label_new[mapping[f]].append(entry)
 
-    
+    # copy the files (train, test) folders and keep a track of the images
     for key in filename_label_new.keys():
         arr = np.array(filename_label_new[key])
         if arr.size == 0:
@@ -69,7 +69,8 @@ def actualmed_processing(actualmed_csvpath, actualmed_imgpath):
                     copyfile(os.path.join(actualmed_imgpath, patient[1]), os.path.join(savepath, 'train', patient[1]))
                 train.append(patient)
                 train_count[patient[2]] += 1
-            
+    
+    print(count_new)
     print('test count: ', test_count)
     print('train count: ', train_count)
     print("DONE - with actualmed_processing")
