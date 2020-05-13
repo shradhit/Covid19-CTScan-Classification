@@ -7,7 +7,7 @@ import pydicom as dicom
 import cv2
 
 
-# path to covid-19 dataset from Actualmed_COVID-chestxray-dataset
+# process Actualmed_COVID-chestxray-dataset
 def actualmed_processing(actualmed_csvpath, actualmed_imgpath):
   
   
