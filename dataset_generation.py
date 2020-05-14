@@ -303,32 +303,43 @@ def radiography(covid_radiography):
     return  train, test
 
   
-# path to covid-19 dataset from actualmed_imgpath
-actualmed_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Actualmed-COVID-chestxray-dataset/images' 
-actualmed_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Actualmed-COVID-chestxray-dataset/metadata.csv'
-train_actualmed, test_actualmed = actualmed_processing(actualmed_csvpath, actualmed_imgpath)
+def merge():
+    # path to covid-19 dataset from actualmed_imgpath
+    actualmed_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Actualmed-COVID-chestxray-dataset/images' 
+    actualmed_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Actualmed-COVID-chestxray-dataset/metadata.csv'
+    train_actualmed, test_actualmed = actualmed_processing(actualmed_csvpath, actualmed_imgpath)
 
-# path to covid-19 dataset from https://github.com/ieee8023/covid-chestxray-dataset
-cohen_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/covid-chestxray-dataset/images' 
-cohen_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/covid-chestxray-dataset/metadata.csv'
 
-# path to covid-19 dataset from https://github.com/agchung/Figure1-COVID-chestxray-dataset
-fig1_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Figure1-COVID-chestxray-dataset/images'
-fig1_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Figure1-COVID-chestxray-dataset/metadata.csv'
-# combined agchung and ieee8023
-train_ieee_agchung, test_ieee_agchung = ieee_agchung(cohen_csv, cohen_csvpath, fig1_imgpath, fig1_csvpath)
 
-# path to https://www.kaggle.com/c/rsna-pneumonia-detection-challenge
-rsna_datapath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/rsna-pneumonia-detection-challenge'
-# get all the normal from here
-rsna_csvname = 'stage_2_detailed_class_info.csv' 
-# get all the 1s from here since 1 indicate pneumonia
-# found that images that aren't pneunmonia and also not normal are classified as 0s
-rsna_csvname2 = 'stage_2_train_labels.csv' 
-rsna_imgpath = 'stage_2_train_images'
+    # path to covid-19 dataset from https://github.com/ieee8023/covid-chestxray-dataset
+    cohen_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/covid-chestxray-dataset/images' 
+    cohen_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/covid-chestxray-dataset/metadata.csv'
 
-train_rsna, test_rsna = kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2, rsna_imgpath)
+    # path to covid-19 dataset from https://github.com/agchung/Figure1-COVID-chestxray-dataset
+    fig1_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Figure1-COVID-chestxray-dataset/images'
+    fig1_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Figure1-COVID-chestxray-dataset/metadata.csv'
+    # combined agchung and ieee8023
+    train_ieee_agchung, test_ieee_agchung = ieee_agchung(cohen_csv, cohen_csvpath, fig1_imgpath, fig1_csvpath)
 
-# radiography
-covid_radiography = "/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/COVID-19RadiographyDatabase/"
-radiography(covid_radiography)
+
+
+    # path to https://www.kaggle.com/c/rsna-pneumonia-detection-challenge
+    rsna_datapath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/rsna-pneumonia-detection-challenge'
+    # get all the normal from here
+    rsna_csvname = 'stage_2_detailed_class_info.csv' 
+    # get all the 1s from here since 1 indicate pneumonia
+    # found that images that aren't pneunmonia and also not normal are classified as 0s
+    rsna_csvname2 = 'stage_2_train_labels.csv' 
+    rsna_imgpath = 'stage_2_train_images'
+
+    train_rsna, test_rsna = kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2, rsna_imgpath)
+
+
+    # radiography
+    covid_radiography = "/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/COVID-19RadiographyDatabase/"
+    train, test = radiography(covid_radiography)
+    
+    return 'DONE'
+
+if __name__ = "__main__":
+    merge()
