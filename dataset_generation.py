@@ -9,8 +9,7 @@ import cv2
 
 # process Actualmed_COVID-chestxray-dataset
 def actualmed_processing(actualmed_csvpath, actualmed_imgpath):
-  
-  
+    
     train = list()
     test = list()
     mapping = dict()
@@ -197,7 +196,18 @@ def ieee_agchung(cohen_csv, cohen_csvpath, fig1_imgpath, fig1_csvpath):
     
     return train, test 
   
-  
+# path to covid-19 dataset from actualmed_imgpath
 actualmed_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Actualmed-COVID-chestxray-dataset/images' 
 actualmed_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Actualmed-COVID-chestxray-dataset/metadata.csv'
-train, test = actualmed_processing(actualmed_csvpath, actualmed_imgpath)
+train_actualmed, test_actualmed = actualmed_processing(actualmed_csvpath, actualmed_imgpath)
+
+# path to covid-19 dataset from https://github.com/ieee8023/covid-chestxray-dataset
+cohen_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/covid-chestxray-dataset/images' 
+cohen_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/covid-chestxray-dataset/metadata.csv'
+
+# path to covid-14 dataset from https://github.com/agchung/Figure1-COVID-chestxray-dataset
+fig1_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Figure1-COVID-chestxray-dataset/images'
+fig1_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Figure1-COVID-chestxray-dataset/metadata.csv'
+
+train_ieee_agchung, test_ieee_agchung = ieee_agchung(cohen_csv, cohen_csvpath, fig1_imgpath, fig1_csvpath)
+
