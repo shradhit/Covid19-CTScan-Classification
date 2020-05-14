@@ -8,7 +8,7 @@ import cv2
 
 
 # kaggle dataset
-def kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2):
+def kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2, rsna_imgpath):
     # add normal and rest of pneumonia cases from https://www.kaggle.com/c/rsna-pneumonia-detection-challenge
     csv_normal = pd.read_csv(os.path.join(rsna_datapath, rsna_csvname), nrows=None)
     csv_pneu = pd.read_csv(os.path.join(rsna_datapath, rsna_csvname2), nrows=None)
@@ -56,6 +56,8 @@ def kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2):
     return train, test 
 
 
+
+
 # process Actualmed_COVID-chestxray-dataset
 def actualmed_processing(actualmed_csvpath, actualmed_imgpath):
     
@@ -90,9 +92,9 @@ def actualmed_processing(actualmed_csvpath, actualmed_imgpath):
         num_test = max(1, round(split*num_diff_patients))
         #select num_test number of random patients
         if key == 'normal':
-             test_patients = random.sample(list(np.unique(arr[:,0])), num_test)
+             test_patients = random.sample(list(np.unique(list(zip(*lst))[0])), num_test)
         elif key == 'COVID-19':
-             test_patients = random.sample(list(np.unique(arr[:,0])), num_test)
+             test_patients = random.sample(list(np.unique(list(zip(*lst))[0])), num_test)
         else: 
              test_patients = []
         print('Key: ', key)
@@ -126,8 +128,7 @@ def actualmed_processing(actualmed_csvpath, actualmed_imgpath):
     return train, test 
   
   
-  
-  
+
   
 def ieee_agchung(cohen_csv, cohen_csvpath, fig1_imgpath, fig1_csvpath):
     
@@ -206,15 +207,15 @@ def ieee_agchung(cohen_csv, cohen_csvpath, fig1_imgpath, fig1_csvpath):
         if arr.size == 0:
             continue
         # split by patients
-        num_diff_patients = len(np.unique(arr[:,0]))
+        num_diff_patients = len(np.unique(list(zip(*arr))[0]))
         num_test = max(1, round(split*num_diff_patients))
         # select num_test number of random patients
         if key == 'pneumonia':
-            #test_patients = ['8', '31']
-            test_patients = random.sample(list(arr[:,0]), num_test)
+            test_patients = ['8', '31']
+            #test_patients = random.sample(list(zip(*arr))[0], num_test)
         elif key == 'COVID-19':
-            #test_patients = ['19', '20', '36', '42', '86', '94', '97', '117', '132', '138', '144', '150', '163', '169']  
-            test_patients = random.sample(list(arr[:,0]), num_test)
+            test_patients = ['19', '20', '36', '42', '86', '94', '97', '117', '132', '138', '144', '150', '163', '169']  
+            #test_patients = random.sample(list(zip(*arr))[0], num_test)
         else: 
             test_patients = []
         print('Key: ', key)
@@ -298,8 +299,8 @@ def radiography(covid_radiography):
             
     train = list(np.setdiff1d(list_covid,test_covid)) + list(np.setdiff1d(list_normal,test_normal)) +  list(np.setdiff1d(list_viral,test_viral))
     test = test_covid + test_normal + test_viral
+    print()
     return  train, test
-
 
   
 # path to covid-19 dataset from actualmed_imgpath
