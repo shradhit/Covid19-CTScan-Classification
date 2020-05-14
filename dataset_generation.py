@@ -244,6 +244,63 @@ def ieee_agchung(cohen_csv, cohen_csvpath, fig1_imgpath, fig1_csvpath):
     print('train count: ', train_count)
     
     return train, test 
+
+
+
+def radiography(covid_radiography):
+    
+    covid_img = "COVID-19"
+    covid_metadata = "COVID-19.metadata.xlsx"
+
+    normal_img = "NORMAL"
+    normal_metadata = "NORMAL.metadata.xlsx"
+
+    viral_img = "Viral Pneumonia"
+    viral_metadata = "Viral Pneumonia.matadata.xlsx"
+
+
+    list_covid  = os.listdir(os.path.join(covid_radiography, covid_img))
+    list_normal =  os.listdir(os.path.join(covid_radiography, normal_img))
+    list_viral  =  os.listdir(os.path.join(covid_radiography, viral_img))
+
+
+    covid_total = len(list_covid)
+    num_covid_test = max(1, round(split*covid_total))
+
+    normal_total = len(list_normal)
+    num_normal_test = max(1, round(split*normal_total))
+
+    viral_total = len(list_viral)
+    num_viral_test = max(1, round(split*viral_total))
+
+    test_covid = random.sample(list_covid, num_covid_test)
+    test_normal = random.sample(list_normal, num_normal_test)
+    test_viral = random.sample(list_viral, num_viral_test)
+
+
+    for x in (list_covid):
+        if x in test_covid:
+            copyfile(os.path.join(covid_radiography, covid_img, x ), os.path.join(savepath, 'test', x))
+        else: 
+            copyfile(os.path.join(covid_radiography, covid_img, x), os.path.join(savepath, 'train', x))
+
+    for x in (list_viral):
+        if x in test_viral:
+            copyfile(os.path.join(covid_radiography, viral_img, x ), os.path.join(savepath, 'test', x))
+        else: 
+            copyfile(os.path.join(covid_radiography, viral_img, x), os.path.join(savepath, 'train', x))
+
+    for x in (list_normal):
+        if x in test_normal:
+            copyfile(os.path.join(covid_radiography, normal_img, x ), os.path.join(savepath, 'test', x))
+        else: 
+            copyfile(os.path.join(covid_radiography, normal_img, x), os.path.join(savepath, 'train', x))
+            
+    train = list(np.setdiff1d(list_covid,test_covid)) + list(np.setdiff1d(list_normal,test_normal)) +  list(np.setdiff1d(list_viral,test_viral))
+    test = test_covid + test_normal + test_viral
+    return  train, test
+
+
   
 # path to covid-19 dataset from actualmed_imgpath
 actualmed_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Actualmed-COVID-chestxray-dataset/images' 
@@ -260,9 +317,6 @@ fig1_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Figure1-C
 # combined agchung and ieee8023
 train_ieee_agchung, test_ieee_agchung = ieee_agchung(cohen_csv, cohen_csvpath, fig1_imgpath, fig1_csvpath)
 
-
-
-### 
 # path to https://www.kaggle.com/c/rsna-pneumonia-detection-challenge
 rsna_datapath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/rsna-pneumonia-detection-challenge'
 # get all the normal from here
@@ -273,3 +327,7 @@ rsna_csvname2 = 'stage_2_train_labels.csv'
 rsna_imgpath = 'stage_2_train_images'
 
 train_rsna, test_rsna = kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2, rsna_imgpath)
+
+# radiography
+covid_radiography = "/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/COVID-19RadiographyDatabase/"
+radiography(covid_radiography)
