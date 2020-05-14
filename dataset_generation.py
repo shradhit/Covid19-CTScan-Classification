@@ -7,6 +7,55 @@ import pydicom as dicom
 import cv2
 
 
+# kaggle dataset
+def kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2):
+    # add normal and rest of pneumonia cases from https://www.kaggle.com/c/rsna-pneumonia-detection-challenge
+    csv_normal = pd.read_csv(os.path.join(rsna_datapath, rsna_csvname), nrows=None)
+    csv_pneu = pd.read_csv(os.path.join(rsna_datapath, rsna_csvname2), nrows=None)
+    patients = {'normal': [], 'pneumonia': []}
+
+    for index, row in csv_normal.iterrows():
+        if row['class'] == 'Normal':
+            patients['normal'].append(row['patientId'])
+
+    for index, row in csv_pneu.iterrows():
+        if int(row['Target']) == 1:
+            patients['pneumonia'].append(row['patientId'])
+
+    for key in patients.keys():
+        arr = np.array(patients[key])
+        if arr.size == 0:
+            continue
+        # split by patients 
+        num_diff_patients = len(np.unique(arr))
+        num_test = max(1, round(split*num_diff_patients))
+        #test_patients = np.load('/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/rsna_test_patients_{}.npy'.format(key)) 
+        test_patients = random.sample(list(arr), num_test)
+        #, download the .npy files from the repo.
+        #np.save('rsna_test_patients_{}.npy'.format(key), np.array(test_patients))
+        for patient in arr:
+            if patient not in patient_imgpath:
+                patient_imgpath[patient] = [patient]
+            else:
+                continue  # skip since image has already been written
+            ds = dicom.dcmread(os.path.join(rsna_datapath, rsna_imgpath, patient + '.dcm'))
+            pixel_array_numpy = ds.pixel_array
+            imgname = patient + '.png'
+            if patient in test_patients:
+                cv2.imwrite(os.path.join(savepath, 'test', imgname), pixel_array_numpy)
+                test.append([patient, imgname, key])
+                test_count[key] += 1
+            else:
+                cv2.imwrite(os.path.join(savepath, 'train', imgname), pixel_array_numpy)
+                train.append([patient, imgname, key])
+                train_count[key] += 1
+    
+    print('train count: ', train_count)
+    print('test count: ', test_count)
+    
+    return train, test 
+
+
 # process Actualmed_COVID-chestxray-dataset
 def actualmed_processing(actualmed_csvpath, actualmed_imgpath):
     
@@ -205,9 +254,22 @@ train_actualmed, test_actualmed = actualmed_processing(actualmed_csvpath, actual
 cohen_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/covid-chestxray-dataset/images' 
 cohen_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/covid-chestxray-dataset/metadata.csv'
 
-# path to covid-14 dataset from https://github.com/agchung/Figure1-COVID-chestxray-dataset
+# path to covid-19 dataset from https://github.com/agchung/Figure1-COVID-chestxray-dataset
 fig1_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Figure1-COVID-chestxray-dataset/images'
 fig1_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Figure1-COVID-chestxray-dataset/metadata.csv'
-
+# combined agchung and ieee8023
 train_ieee_agchung, test_ieee_agchung = ieee_agchung(cohen_csv, cohen_csvpath, fig1_imgpath, fig1_csvpath)
 
+
+
+### 
+# path to https://www.kaggle.com/c/rsna-pneumonia-detection-challenge
+rsna_datapath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/rsna-pneumonia-detection-challenge'
+# get all the normal from here
+rsna_csvname = 'stage_2_detailed_class_info.csv' 
+# get all the 1s from here since 1 indicate pneumonia
+# found that images that aren't pneunmonia and also not normal are classified as 0s
+rsna_csvname2 = 'stage_2_train_labels.csv' 
+rsna_imgpath = 'stage_2_train_images'
+
+train_rsna, test_rsna = kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2, rsna_imgpath)
