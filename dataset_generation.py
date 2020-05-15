@@ -326,8 +326,9 @@ def radiography(covid_radiography):
 
 
   
-def merge():
-    
+def merge(): 
+    #def merge():
+
     # path to covid-19 dataset from actualmed_imgpath
     actualmed_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Actualmed-COVID-chestxray-dataset/images' 
     actualmed_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Actualmed-COVID-chestxray-dataset/metadata.csv'
@@ -347,7 +348,7 @@ def merge():
     rsna_datapath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/rsna-pneumonia-detection-challenge'
     # get all the normal from here
     rsna_csvname = 'stage_2_detailed_class_info.csv' 
-    
+
     # get all the 1s from here since 1 indicate pneumonia
     # found that images that aren't pneunmonia and also not normal are classified as 0s
     rsna_csvname2 = 'stage_2_train_labels.csv' 
@@ -358,8 +359,71 @@ def merge():
     # radiography
     covid_radiography = "/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/COVID-19RadiographyDatabase/"
     train, test = radiography(covid_radiography)
+
+    #return 'DONE ALL'
+
+
+    ######
+
+    #print(len(train_ieee_agchung))
+    df_train_ieee_agchug = convert_todf(train_ieee_agchung)
+    df_train_ieee_agchug['train/test'] = 'train'
+
+    #print(len(test_ieee_agchung))
+    df_test_ieee_agchug = convert_todf(test_ieee_agchung)
+    df_test_ieee_agchug['train/test'] = 'test'
+
+    #print(len(train_actualmed))
+    df_train_actualmed = convert_todf(train_actualmed)
+    df_train_actualmed['train/test'] = 'train'
+
+    #print(len(test_actualmed))
+    df_test_actualmed = convert_todf(test_actualmed)
+    df_test_actualmed['train/test'] = 'test'
+
+    #print(len(train_rsna))
+    df_train_rsna = convert_todf(train_rsna)
+    df_train_rsna['train/test'] = 'train'
+
+    #print(len(test_rsna))
+    df_test_rsna = convert_todf(test_rsna)
+    df_test_rsna['train/test'] = 'test'
+
+    #print(len(train))
+    df_train_radiography = convert_todf(train)
+    df_train_radiography['train/test'] = 'train'
+
+    #print(len(test))
+    df_test_radiography = convert_todf(test)
+    df_test_radiography['train/test'] = 'test'
+
+
+
+    ######## 
+    df_ieee = df_train_ieee_agchug.append(df_test_ieee_agchug)
+    df_ieee.columns = ['patientid', 'imagename', 'target', 'view', 'train_test']
+
+
+
+    df_actualmed = df_train_actualmed.append(df_test_actualmed)
+    df_actualmed.columns = ['patientid', 'imagename', 'target', 'view', 'train_test']
+
+
+    df_rsna = df_train_rsna.append(df_test_rsna)
+    df_rsna.columns = ['patientid', 'imagename', 'target', 'train_test']
+
+
+    df_radiography = df_train_radiography.append(df_test_radiography)
+    df_radiography.columns = ['patientid', 'train_test']
+    df_radiography['imagename'] = df_radiography['patientid']
+
+    df_all = df_ieee.append([df_actualmed, df_rsna, df_radiography])
+    df_all.to_csv('contains_all_data.csv')
     
-    return 'DONE ALL'
+    return "DONE ALL"
+
+
+
 
 if __name__ = "__main__":
     merge()
