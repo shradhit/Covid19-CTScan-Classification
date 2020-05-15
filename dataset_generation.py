@@ -9,6 +9,15 @@ import cv2
 
 # kaggle dataset
 def kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2, rsna_imgpath):
+    train = list()
+    test = list()
+    savepath = "/Users/shradhitsubudhi/Documents/COVID/mywork/modified_data/"
+    split = 0.1
+    patient_imgpath = {}
+
+    test_count = {'normal': 0, 'pneumonia': 0, 'COVID-19': 0}
+    train_count = {'normal': 0, 'pneumonia': 0, 'COVID-19': 0}
+
     # add normal and rest of pneumonia cases from https://www.kaggle.com/c/rsna-pneumonia-detection-challenge
     csv_normal = pd.read_csv(os.path.join(rsna_datapath, rsna_csvname), nrows=None)
     csv_pneu = pd.read_csv(os.path.join(rsna_datapath, rsna_csvname2), nrows=None)
@@ -61,6 +70,12 @@ def kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2, rsna_imgpath):
 # process Actualmed_COVID-chestxray-dataset
 def actualmed_processing(actualmed_csvpath, actualmed_imgpath):
     
+    savepath = "/Users/shradhitsubudhi/Documents/COVID/mywork/modified_data/"
+    split = 0.1
+    test_count = {'normal': 0, 'pneumonia': 0, 'COVID-19': 0}
+    train_count = {'normal': 0, 'pneumonia': 0, 'COVID-19': 0}
+
+    patient_imgpath = {}
     train = list()
     test = list()
     mapping = dict()
@@ -92,9 +107,9 @@ def actualmed_processing(actualmed_csvpath, actualmed_imgpath):
         num_test = max(1, round(split*num_diff_patients))
         #select num_test number of random patients
         if key == 'normal':
-             test_patients = random.sample(list(np.unique(list(zip(*lst))[0])), num_test)
+             test_patients = random.sample(list(np.unique(list(zip(*arr))[0])), num_test)
         elif key == 'COVID-19':
-             test_patients = random.sample(list(np.unique(list(zip(*lst))[0])), num_test)
+             test_patients = random.sample(list(np.unique(list(zip(*arr))[0])), num_test)
         else: 
              test_patients = []
         print('Key: ', key)
@@ -130,8 +145,14 @@ def actualmed_processing(actualmed_csvpath, actualmed_imgpath):
   
 
   
-def ieee_agchung(cohen_csv, cohen_csvpath, fig1_imgpath, fig1_csvpath):
+def ieee_agchung(cohen_imgpath, cohen_csvpath, fig1_imgpath, fig1_csvpath):
     
+    savepath = "/Users/shradhitsubudhi/Documents/COVID/mywork/modified_data/"
+    split = 0.1
+    train = list()
+    test = list()
+    test_count = {'normal': 0, 'pneumonia': 0, 'COVID-19': 0}
+    train_count = {'normal': 0, 'pneumonia': 0, 'COVID-19': 0}
     mapping = dict()
     mapping['COVID-19'] = 'COVID-19'
     mapping['SARS'] = 'pneumonia'
@@ -302,14 +323,14 @@ def radiography(covid_radiography):
     print()
     return  train, test
 
+
   
 def merge():
+    
     # path to covid-19 dataset from actualmed_imgpath
     actualmed_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Actualmed-COVID-chestxray-dataset/images' 
     actualmed_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Actualmed-COVID-chestxray-dataset/metadata.csv'
     train_actualmed, test_actualmed = actualmed_processing(actualmed_csvpath, actualmed_imgpath)
-
-
 
     # path to covid-19 dataset from https://github.com/ieee8023/covid-chestxray-dataset
     cohen_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/covid-chestxray-dataset/images' 
@@ -319,14 +340,13 @@ def merge():
     fig1_imgpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Figure1-COVID-chestxray-dataset/images'
     fig1_csvpath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/Figure1-COVID-chestxray-dataset/metadata.csv'
     # combined agchung and ieee8023
-    train_ieee_agchung, test_ieee_agchung = ieee_agchung(cohen_csv, cohen_csvpath, fig1_imgpath, fig1_csvpath)
-
-
+    train_ieee_agchung, test_ieee_agchung = ieee_agchung(cohen_imgpath, cohen_csvpath, fig1_imgpath, fig1_csvpath)
 
     # path to https://www.kaggle.com/c/rsna-pneumonia-detection-challenge
     rsna_datapath = '/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/rsna-pneumonia-detection-challenge'
     # get all the normal from here
     rsna_csvname = 'stage_2_detailed_class_info.csv' 
+    
     # get all the 1s from here since 1 indicate pneumonia
     # found that images that aren't pneunmonia and also not normal are classified as 0s
     rsna_csvname2 = 'stage_2_train_labels.csv' 
@@ -334,12 +354,11 @@ def merge():
 
     train_rsna, test_rsna = kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2, rsna_imgpath)
 
-
     # radiography
     covid_radiography = "/Users/shradhitsubudhi/Documents/COVID/mywork/all_data/COVID-19RadiographyDatabase/"
     train, test = radiography(covid_radiography)
     
-    return 'DONE'
+    return 'DONE ALL'
 
 if __name__ = "__main__":
     merge()
