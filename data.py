@@ -81,15 +81,7 @@ class BalanceCovidDataset(keras.utils.Sequence):
             input_shape=(224, 224),
             n_classes=3,
             num_channels=3,
-            mapping={
-                'normal': 0,
-                'pneumonia': 1,
-                'COVID-19': 2
-            },
-            shuffle=True,
             augmentation=apply_augmentation,
-            covid_percent=0.3,
-            class_weights=[1., 1., 6.],
             top_percent=0.08
     ):
         'Initialization'
@@ -97,11 +89,6 @@ class BalanceCovidDataset(keras.utils.Sequence):
         self.input_shape = input_shape
         self.n_classes = n_classes
         self.num_channels = num_channels
-        self.mapping = mapping
-        self.shuffle = True
-        self.covid_percent = covid_percent
-        self.class_weights = class_weights
-        self.n = 0
         self.augmentation = augmentation
         self.top_percent = top_percent
 
@@ -112,7 +99,6 @@ class BalanceCovidDataset(keras.utils.Sequence):
                                    self.input_shape[0])
             x = self.augmentation(x)
             x = x.astype('float32') / 255.0
-            class_weights = self.class_weights
             return x
 
 
