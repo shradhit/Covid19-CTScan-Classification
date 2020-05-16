@@ -324,6 +324,17 @@ def radiography(covid_radiography):
     print()
     return  train, test
 
+def convert_todf(array):
+    coversion = []
+    for x in array:
+        if isinstance(x, (np.ndarray, np.generic)) == True:
+            coversion.append(x.tolist())
+        else: 
+            coversion.append(x)
+    df = pd.DataFrame(coversion)  
+    return df
+
+
 
   
 def merge(): 
