@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow import keras
-
+import pandas as pd
 import numpy as np
 import os
 import cv2
@@ -70,8 +70,7 @@ def apply_augmentation(img):
     return img
 
 def _process_csv_file(file):
-    with open(file, 'r') as fr:
-        files = fr.readlines()
+    files = pd.read_csv(file)
     return files
 
 
