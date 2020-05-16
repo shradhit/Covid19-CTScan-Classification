@@ -94,12 +94,12 @@ class BalanceCovidDataset(keras.utils.Sequence):
 
 
     def transformation(self):
-            x = process_image_file(os.path.join(self.datadir),
-                                   self.top_percent,
-                                   self.input_shape[0])
-            x = self.augmentation(x)
-            x = x.astype('float32') / 255.0
-            return x
+        x = process_image_file(os.path.join(self.datadir),
+                               self.top_percent,
+                               self.input_shape[0])
+        x = self.augmentation(x)
+        x = x.astype('float32') / 255.0
+        return x
 
 
 transformed_images = BalanceCovidDataset(data_dir='/Users/shradhitsubudhi/Documents/COVID/mywork/modified_data/test/0a51f668-b7b1-4d8d-9ab9-de1f702f071a.png')
