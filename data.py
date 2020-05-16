@@ -168,7 +168,7 @@ class BalanceCovidDataset(keras.utils.Sequence):
             batch_files[covid_inds[i]] = covid_files[i]
 
         for i in range(len(batch_files)):
-            sample = batch_files[i].split()
+            sample = batch_files[i].split(",")
 
             if self.is_training:
                 folder = 'train'
