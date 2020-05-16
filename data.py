@@ -174,8 +174,8 @@ class BalanceCovidDataset(keras.utils.Sequence):
 #                 folder = 'train'
 #             else:
 #                 folder = 'test'
-    def __len__(self):
-        return 100
+#     def __len__(self):
+#         return 100
         
     def getitem(self,idx):
             x = process_image_file(os.path.join(self.datadir),
