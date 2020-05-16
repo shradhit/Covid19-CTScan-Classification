@@ -69,10 +69,6 @@ def apply_augmentation(img):
     img = _augmentation_transform.random_transform(img)
     return img
 
-def process_csv_file(file):
-    files = pd.read_csv(file)
-    return files
-
 
 
 class BalanceCovidDataset(keras.utils.Sequence):
