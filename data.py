@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 import os
 import cv2
-
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 def crop_top(img, percent=0.15):
@@ -46,7 +45,8 @@ def random_ratio_resize(img, prob=0.3, delta=0.1):
     img = cv2.resize(img, size)
     img = cv2.copyMakeBorder(img, top, bot, left, right, cv2.BORDER_CONSTANT,
                              (0, 0, 0))
-
+    
+    print(img)
     if img.shape[0] != 480 or img.shape[1] != 480:
         raise ValueError(img.shape, size)
     return img
@@ -69,50 +69,51 @@ def apply_augmentation(img):
     img = _augmentation_transform.random_transform(img)
     return img
 
-def _process_csv_file(file):
+def process_csv_file(file):
     files = pd.read_csv(file)
     return files
 
 
-# class BalanceCovidDataset(keras.utils.Sequence):
-#     'Generates data for Keras'
 
-#     def __init__(
-#             self,
-#             data_dir,
+class BalanceCovidDataset(keras.utils.Sequence):
+    'Generates data for Keras'
+
+    def __init__(
+            self,
+            data_dir,
 #             csv_file,
 #             is_training=True,
-#             batch_size=8,
-#             input_shape=(224, 224),
-#             n_classes=3,
-#             num_channels=3,
-#             mapping={
-#                 'normal': 0,
-#                 'pneumonia': 1,
-#                 'COVID-19': 2
-#             },
-#             shuffle=True,
-#             augmentation=apply_augmentation,
-#             covid_percent=0.3,
-#             class_weights=[1., 1., 6.],
-#             top_percent=0.08
-#     ):
-#         'Initialization'
-#         self.datadir = data_dir
-#         self.dataset = _process_csv_file(csv_file)
-#         self.is_training = is_training
-#         self.batch_size = batch_size
-#         self.N = len(self.dataset)
-#         self.input_shape = input_shape
-#         self.n_classes = n_classes
-#         self.num_channels = num_channels
-#         self.mapping = mapping
-#         self.shuffle = True
-#         self.covid_percent = covid_percent
-#         self.class_weights = class_weights
-#         self.n = 0
-#         self.augmentation = augmentation
-#         self.top_percent = top_percent
+            batch_size=8,
+            input_shape=(224, 224),
+            n_classes=3,
+            num_channels=3,
+            mapping={
+                'normal': 0,
+                'pneumonia': 1,
+                'COVID-19': 2
+            },
+            shuffle=True,
+            augmentation=apply_augmentation,
+            covid_percent=0.3,
+            class_weights=[1., 1., 6.],
+            top_percent=0.08
+    ):
+        'Initialization'
+        self.datadir = data_dir
+        #self.dataset = _process_csv_file(csv_file)
+        #self.is_training = is_training
+        #self.batch_size = batch_size
+        #self.N = len(self.dataset)
+        self.input_shape = input_shape
+        self.n_classes = n_classes
+        self.num_channels = num_channels
+        self.mapping = mapping
+        self.shuffle = True
+        self.covid_percent = covid_percent
+        self.class_weights = class_weights
+        self.n = 0
+        self.augmentation = augmentation
+        self.top_percent = top_percent
 
 #         datasets = {'normal': [], 'pneumonia': [], 'COVID-19': []}
 #         for l in self.dataset:
@@ -167,27 +168,32 @@ def _process_csv_file(file):
 #             batch_files[covid_inds[i]] = covid_files[i]
 
 #         for i in range(len(batch_files)):
-#             sample = batch_files[i].split(",")
+#             sample = batch_files[i].split()
 
 #             if self.is_training:
 #                 folder = 'train'
 #             else:
 #                 folder = 'test'
+    def __len__(self):
+        return 100
+        
+    def getitem(self,idx):
+            x = process_image_file(os.path.join(self.datadir),
+                                   self.top_percent,
+                                   self.input_shape[0])
 
-#             x = process_image_file(os.path.join(self.datadir, folder, sample[1]),
-#                                    self.top_percent,
-#                                    self.input_shape[0])
+            #if self.is_training and hasattr(self, 'augmentation'):
+            x = self.augmentation(x)
 
-#             if self.is_training and hasattr(self, 'augmentation'):
-#                 x = self.augmentation(x)
+            x = x.astype('float32') / 255.0
+            #y = self.mapping[sample[2]]
 
-#             x = x.astype('float32') / 255.0
-#             y = self.mapping[sample[2]]
+            #batch_x[i] = x
+            #batch_y[i] = y
 
-#             batch_x[i] = x
-#             batch_y[i] = y
+            class_weights = self.class_weights
+            #weights = np.take(class_weights, batch_y.astype('int64'))
 
-#         class_weights = self.class_weights
-#         weights = np.take(class_weights, batch_y.astype('int64'))
+            return x
+        #keras.utils.to_categorical(batch_y, num_classes=self.n_classes), weights
 
-#         return batch_x, keras.utils.to_categorical(batch_y, num_classes=self.n_classes), weights
