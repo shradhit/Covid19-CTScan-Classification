@@ -368,6 +368,7 @@ def merge():
     #print(len(train_ieee_agchung))
     df_train_ieee_agchug = convert_todf(train_ieee_agchung)
     df_train_ieee_agchug['train/test'] = 'train'
+    
 
     #print(len(test_ieee_agchung))
     df_test_ieee_agchug = convert_todf(test_ieee_agchung)
@@ -402,27 +403,30 @@ def merge():
     ######## 
     df_ieee = df_train_ieee_agchug.append(df_test_ieee_agchug)
     df_ieee.columns = ['patientid', 'imagename', 'target', 'view', 'train_test']
+    df_ieee["dataset"] = "IEEE"
 
 
 
     df_actualmed = df_train_actualmed.append(df_test_actualmed)
     df_actualmed.columns = ['patientid', 'imagename', 'target', 'view', 'train_test']
+    df_actualmed["dataset"] = "actualmed"
 
 
     df_rsna = df_train_rsna.append(df_test_rsna)
     df_rsna.columns = ['patientid', 'imagename', 'target', 'train_test']
+    df_rsna["dataset"] = "rsna"
 
 
     df_radiography = df_train_radiography.append(df_test_radiography)
     df_radiography.columns = ['patientid', 'train_test']
     df_radiography['imagename'] = df_radiography['patientid']
+    df_radiography["dataset"] = "radiography"
+
 
     df_all = df_ieee.append([df_actualmed, df_rsna, df_radiography])
     df_all.to_csv('contains_all_data.csv')
     
     return "DONE ALL"
-
-
 
 
 if __name__ = "__main__":
