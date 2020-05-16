@@ -116,6 +116,6 @@ class BalanceCovidDataset(keras.utils.Sequence):
             return x
 
 
-transformed_images = BalanceCovidDataset(data_dir='/Users/shradhitsubudhi/Documents/COVID/mywork/modified_data/test/0a51f668-b7b1-4d8d-9ab9-de1f702f071a.png',)
+transformed_images = BalanceCovidDataset(data_dir='/Users/shradhitsubudhi/Documents/COVID/mywork/modified_data/test/0a51f668-b7b1-4d8d-9ab9-de1f702f071a.png')
 x = transformed_images.transformation()
 print(x.shape)
