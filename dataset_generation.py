@@ -271,6 +271,7 @@ def ieee_agchung(cohen_imgpath, cohen_csvpath, fig1_imgpath, fig1_csvpath):
 
 def radiography(covid_radiography):
     split = 0.1
+    savepath = "/Users/shradhitsubudhi/Documents/COVID/mywork/modified_data/"
 
     covid_img = "COVID-19"
     covid_metadata = "COVID-19.metadata.xlsx"
