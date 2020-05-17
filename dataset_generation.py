@@ -322,7 +322,9 @@ def radiography(covid_radiography):
             
     train = list(np.setdiff1d(list_covid,test_covid)) + list(np.setdiff1d(list_normal,test_normal)) +  list(np.setdiff1d(list_viral,test_viral))
     test = test_covid + test_normal + test_viral
-    print()
+    #print()
+    
+    
     return  train, test
 
 def convert_todf(array):
