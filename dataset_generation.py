@@ -65,6 +65,20 @@ def kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2, rsna_imgpath):
     return train, test 
 
 
+def applyFunc(s):
+    
+    x = 'COVID'
+    y = 'NORMAL'
+    z = 'Viral'
+    
+    if x in s:
+        return 'COVID-19'
+    elif y in s:
+        return 'normal'
+    elif z in s:
+        return 'pneumonia'
+    return ''
+
 
 
 # process Actualmed_COVID-chestxray-dataset
@@ -435,7 +449,8 @@ def merge():
     df_radiography.columns = ['patientid', 'train_test']
     df_radiography['imagename'] = df_radiography['patientid']
     df_radiography["dataset"] = "radiography"
-
+   
+    df_radiography['target'] = df_radiography['patientid'].apply(applyFunc)
 
     df_all = df_ieee.append([df_actualmed, df_rsna, df_radiography])
     df_all.to_csv('contains_all_data.csv')
