@@ -7,16 +7,7 @@ import pydicom as dicom
 import cv2
 
 
-
-
-
-
-
-
-
 ### ----------------------------------------------###
-
-
 
 ## all codes specifically for s3 
 # listdir("Radiography database/COVID-19/")
