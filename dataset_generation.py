@@ -7,6 +7,63 @@ import pydicom as dicom
 import cv2
 
 
+
+
+
+
+
+
+
+### ----------------------------------------------###
+
+
+
+## all codes specifically for s3 
+# listdir("Radiography database/COVID-19/")
+def listdir(dir_):
+    s3 = boto3.resource('s3')
+    my_bucket = s3.Bucket('aws-a0077-glbl-00-p-s3b-shrd-awb-shrd-prod-78')
+    files = list()
+    for object_summary in my_bucket.objects.filter(Prefix=dir_):
+        files.append(object_summary.key.split('/')[-1])
+    return files
+
+# read excel on s3 
+def read_excel(file_name):
+    s3 = boto3.client('s3') 
+    bucket = "aws-a0077-glbl-00-p-s3b-shrd-awb-shrd-prod-78"
+    obj = s3.get_object(Bucket= bucket, Key= file_name) 
+    initial_df = pd.read_excel(obj['Body']) # 'Body' is a key word
+    return initial_df
+
+# read csv on s3 
+def read_csv(file_name):
+    s3 = boto3.client('s3') 
+    bucket = "aws-a0077-glbl-00-p-s3b-shrd-awb-shrd-prod-78"
+    obj = s3.get_object(Bucket= bucket, Key= file_name) 
+    initial_df = pd.read_csv(obj['Body']) # 'Body' is a key word
+    return initial_df
+
+
+
+# copy files inside csv 
+def copyfile(from_, to_):
+    s3 = boto3.resource('s3')
+    copy_source = {
+        'Bucket': 'aws-a0077-glbl-00-p-s3b-shrd-awb-shrd-prod-78'
+    }
+    copy_source['Key'] = from_
+    s3.meta.client.copy(copy_source, 'aws-a0077-glbl-00-p-s3b-shrd-awb-shrd-prod-78', to_)
+    return "copy done"
+
+
+### ----------------------------------------------###
+
+
+
+
+
+
 # kaggle dataset
 def kaggle_rsna(rsna_datapath, rsna_csvname, rsna_csvname2, rsna_imgpath):
     train = list()
