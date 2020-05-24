@@ -11,6 +11,9 @@ import cv2
 
 ## all codes specifically for s3 
 # listdir("Radiography database/COVID-19/")
+## all codes specifically for s3 
+
+# listdir("Radiography database/COVID-19/")
 def listdir(dir_):
     s3 = boto3.resource('s3')
     my_bucket = s3.Bucket('aws-a0077-glbl-00-p-s3b-shrd-awb-shrd-prod-78')
@@ -28,13 +31,17 @@ def read_excel(file_name):
     return initial_df
 
 # read csv on s3 
-def read_csv(file_name):
+def read_csv(file_name, encoding = None):
     s3 = boto3.client('s3') 
     bucket = "aws-a0077-glbl-00-p-s3b-shrd-awb-shrd-prod-78"
-    obj = s3.get_object(Bucket= bucket, Key= file_name) 
-    initial_df = pd.read_csv(obj['Body']) # 'Body' is a key word
+    obj = s3.get_object(Bucket= bucket, Key= file_name)
+    if encoding != None: 
+        initial_df = pd.read_csv(obj['Body'], encoding= "ISO-8859-1") # 'Body' is a key word
+        return initial_df
+    else:
+        initial_df = pd.read_csv(obj['Body']) # 'Body' is a key word
     return initial_df
-
+        
 
 
 # copy files inside csv 
@@ -48,6 +55,57 @@ def copyfile(from_, to_):
     return "copy done"
 
 
+# dcmread_("rsna-pnemonia-detection-challenge/stage_2_test_images/000e3a7d-c0ca-4349-bb26-5af2d8993c3d.dcm")
+def dcmread_(file):
+    session = boto3.Session()
+    s3 = session.client('s3')
+
+    fileobj = s3.get_object(
+            Bucket="aws-a0077-glbl-00-p-s3b-shrd-awb-shrd-prod-78",
+            Key= file
+            )
+
+    # open the file object and read it into the variable dicom_data. 
+    dicom_data = fileobj['Body'].read()
+
+    # Read DICOM
+    dicom_bytes = dicom.filebase.DicomBytesIO(dicom_data)
+    dicom_dataset = dicom.dcmread(dicom_bytes)
+    return dicom_dataset
+
+
+# s3.put_object(Bucket="aws-a0077-glbl-00-p-s3b-shrd-awb-shrd-prod-78", Key = "check/imageName", Body = local_image, ContentType= 'image/png')  
+#cv2.imwrite for s3 
+def imwrite_(destination, array):
+    bucket_name = 'aws-a0077-glbl-00-p-s3b-shrd-awb-shrd-prod-78'
+    s3 = boto3.resource("s3")
+    try:
+        image_string = cv2.imencode('.png', array)[1].tostring()
+        s3.Bucket(bucket_name).put_object(Key=destination, Body=image_string)
+
+    except:
+        print('false')
+        
+        
+        
+def to_csv_on_s3(dataframe, filename):
+    DESTINATION = 'aws-a0077-glbl-00-p-s3b-shrd-awb-shrd-prod-78'
+
+    """ Write a dataframe to a CSV on S3 """
+    print("Writing {} records to {}".format(len(dataframe), filename))
+    # Create buffer
+    csv_buffer = StringIO()
+    # Write dataframe to buffer
+    dataframe.to_csv(csv_buffer, sep=",", index=False)
+    # Create S3 object
+    s3_resource = boto3.resource("s3")
+    # Write buffer to S3 object
+    s3_resource.Object(DESTINATION, filename).put(Body=csv_buffer.getvalue())
+    return 0
+
+
+
+###############################----------------------------------------######
 ### ----------------------------------------------###
 
 
