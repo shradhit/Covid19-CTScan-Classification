@@ -391,23 +391,28 @@ def ieee_agchung(cohen_imgpath, cohen_csvpath, fig1_imgpath, fig1_csvpath):
 
 def radiography(covid_radiography):
     split = 0.1
-    savepath = "/Users/shradhitsubudhi/Documents/COVID/mywork/modified_data/"
+    savepath = "modified_data/"
 
     covid_img = "COVID-19"
-    covid_metadata = "COVID-19.metadata.xlsx"
+    #covid_metadata = "COVID-19.metadata.xlsx"
 
     normal_img = "NORMAL"
-    normal_metadata = "NORMAL.metadata.xlsx"
+    #normal_metadata = "NORMAL.metadata.xlsx"
 
     viral_img = "Viral Pneumonia"
-    viral_metadata = "Viral Pneumonia.matadata.xlsx"
+    #viral_metadata = "Viral Pneumonia.matadata.xlsx"
 
-
-    list_covid  = os.listdir(os.path.join(covid_radiography, covid_img))
-    list_normal =  os.listdir(os.path.join(covid_radiography, normal_img))
-    list_viral  =  os.listdir(os.path.join(covid_radiography, viral_img))
-
-
+    
+    list_covid  = listdir(os.path.join(covid_radiography, covid_img) + '/')
+    list_normal =  listdir(os.path.join(covid_radiography, normal_img) + '/')
+    list_viral  =  listdir(os.path.join(covid_radiography, viral_img) + '/')
+    
+    data_covid = pd.DataFrame(list_covid)
+    data_covid['target']  = 'COVID-19'
+    data_normal = pd.DataFrame(list_normal)
+    data_normal['target'] = 'normal'
+    data_viral = pd.DataFrame(list_viral)
+    data_viral['target']  = 'pneumonia'
     covid_total = len(list_covid)
     num_covid_test = max(1, round(split*covid_total))
 
@@ -442,9 +447,8 @@ def radiography(covid_radiography):
             
     train = list(np.setdiff1d(list_covid,test_covid)) + list(np.setdiff1d(list_normal,test_normal)) +  list(np.setdiff1d(list_viral,test_viral))
     test = test_covid + test_normal + test_viral
-    #print()
-    
-    
+    print("#######################################################################################")
+
     return  train, test
 
 def convert_todf(array):
